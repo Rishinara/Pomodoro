@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pomodoro Timer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Arial", sans-serif;
+      background: rgb(158, 189, 224);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .pomodoro {
+      background: #e9e19f;
+      padding: 40px;
+      border-radius: 16px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .mode {
+      font-size: 0.9rem;
+      color: #837f7f;
+      margin-bottom: 25px;
+    }
+
+    .timer {
+      font-size: 4rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #222;
+    }
+
+    .controls button {
+      background: #ff6a6a;
+      border: none;
+      color: white;
+      padding: 10px 18px;
+      margin: 5px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .controls button:hover {
+      background: #e05555;
+    }
+
+    .controls button.secondary {
+      background: #555;
+    }
+
+    .controls button.secondary:hover {
+      background: #333;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="pomodoro">
+    <h1>🍅 Pomodoro</h1>
+    <div class="mode" id="mode">Focus Time</div>
+    <div class="timer" id="timer">25:00</div>
+
+    <div class="controls">
+      <button onclick="startTimer()">Start</button>
+      <button onclick="pauseTimer()" class="secondary">Pause</button>
+      <button onclick="resetTimer()" class="secondary">Reset</button>
+    </div>
+
+    <div class="footer">Focus • Break • Repeat</div>
+  </div>
+
+  <script>
+    let focusTime = 25 * 60;
+    let breakTime = 5 * 60;
+    let timeLeft = focusTime;
+    let isRunning = false;
+    let isFocus = true;
+    let interval;
+
+    const timerEl = document.getElementById("timer");
+    const modeEl = document.getElementById("mode");
+
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      timerEl.textContent =
+        `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    }
+
+    function startTimer() {
+      if (isRunning) return;
+      isRunning = true;
+
+      interval = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          isRunning = false;
+          isFocus = !isFocus;
+
+          if (isFocus) {
+            timeLeft = focusTime;
+            modeEl.textContent = "Focus Time";
+          } else {
+            timeLeft = breakTime;
+            modeEl.textContent = "Break Time";
+          }
+
+          updateDisplay();
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(interval);
+      isRunning = false;
+    }
+
+    function resetTimer() {
+      clearInterval(interval);
+      isRunning = false;
+      isFocus = true;
+      timeLeft = focusTime;
+      modeEl.textContent = "Focus Time";
+      updateDisplay();
+    }
+  </script>
+
+</body>
+</html>
